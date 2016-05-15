@@ -68,6 +68,12 @@ var hist= function(data_in, chart_id, value, chart_title, counttype) {
 
 	var xScale = d3.scale.ordinal().domain(unique_names).rangePoints([0, width]);
 
+//	if (axistype == 0) {
+//	  var xScale = d3.scale.ordinal().domain(unique_names).rangePoints([0, width]);
+//	} else {
+//	  var xScale = d3.scale.linear().domain([2000, 2001]).rangePoints([0, width]);
+//  }
+
   var xAxis = d3.svg.axis()
     .scale(xScale)
     .orient("bottom");
@@ -112,7 +118,7 @@ d3.json("https://tranquil-peak-82564.herokuapp.com/api/v1.0/data/baseball/",
 
 		var reduce_init = function() {
 //  		return {"count": 0, "total": 0, "yearcount": 0, "allyears": []};
-  		return {"count": 0, "total": 0, "minyear": 1871, "maxyear": 2015, "yearcount": 0, "allyears": []};
+  		return {"count": 0, "total": 0, "minyear": 1871, "maxyear": 2015, "yearcount": 0, "allyears": [], "players": [], "playercount":0};
 		}
 
 		var reduce_add = function(p, v, nf) {
@@ -124,6 +130,10 @@ d3.json("https://tranquil-peak-82564.herokuapp.com/api/v1.0/data/baseball/",
     	if (p.allyears.indexOf(v.year) < 0) {
     		++p.yearcount;
     		p.allyears.push(v.year);
+    	}
+      if (p.players.indexOf(v.player_id) < 0) {
+    		++p.playercount;
+    		p.players.push(v.player_id);
     	}
   		return p;
 		}
@@ -137,6 +147,10 @@ d3.json("https://tranquil-peak-82564.herokuapp.com/api/v1.0/data/baseball/",
     		--p.yearcount;
 	    	p.allyears.splice(p.allyears.indexOf(v.year), 1);
     	}
+      if (p.players.indexOf(v.player_id) >= 0) {
+    		--p.playercount;
+	    	p.players.splice(p.players.indexOf(v.player_id), 1);
+    	}
   		return p;
 	}
 
@@ -146,9 +160,9 @@ d3.json("https://tranquil-peak-82564.herokuapp.com/api/v1.0/data/baseball/",
     group_player.reduce(reduce_add, reduce_remove, reduce_init);
 
     /* build charts here */
-    var render_plots = function(e){
+    var render_plots = function(e,f){
       hist(group_team.top(e).filter(function(d) {
-      	return d.value.count > 0; }),
+      	return d.value.count > 0 & d.value.playercount <=f; }),
       	"appearances_by_team",
         "count",
         "# of Player Appearances by Team",
@@ -156,7 +170,7 @@ d3.json("https://tranquil-peak-82564.herokuapp.com/api/v1.0/data/baseball/",
       );
 
       hist(group_team.top(e).filter(function(d) {
-      	return d.value.yearcount > 0; }),
+      	return d.value.yearcount > 0 & d.value.playercount <=f; }),
       	"years_by_team",
         "yearcount",
         "# of Year Appearances by Team",
@@ -164,7 +178,7 @@ d3.json("https://tranquil-peak-82564.herokuapp.com/api/v1.0/data/baseball/",
       );
 
 			hist(group_year.top(e).filter(function(d) {
-      	return d.value.count > 0; }),
+      	return d.value.count > 0 & d.value.playercount <=f; }),
       	"players_by_year",
         "count",
         "# of Player Appearances by Year",
@@ -172,7 +186,7 @@ d3.json("https://tranquil-peak-82564.herokuapp.com/api/v1.0/data/baseball/",
       );
 
       hist(group_ngames.top(e).filter(function(d) {
-      	return d.value.count > 0; }),
+      	return d.value.count > 0 & d.value.playercount <=f; }),
       	"appearances_by_games_played",
         "count",
         "# of Appearances by Games Played",
@@ -204,34 +218,40 @@ d3.json("https://tranquil-peak-82564.herokuapp.com/api/v1.0/data/baseball/",
       "#team_slider", {
         "id": "team_slider",
 				"min": 5,
-        "max": 50
+        "max": 75
       });
 
       var player_slider = new Slider(
       "#player_slider", {
         "id": "player_slider",
-        "min": 0,
-        "max": 30
+        "min": 1,
+        "max": 50,
+        "value":40
     });
 
     // this is an event handler for a particular slider
     n_games_slider.on("slide", function(e) {
       d3.select("#n_games_slider_txt").text("min: " + e[0] + ", max: " + e[1]);
       dim_ngames.filter(e);
-      render_plots(Infinity);
+      render_plots(Infinity,Infinity);
     });
 
     years_slider.on("slide", function(e) {
       d3.select("#years_slider_txt").text("min: " + e[0] + ", max: " + e[1]);
       dim_year.filter(e);
-      render_plots(Infinity);
+      render_plots(Infinity,Infinity);
     });
 
 		team_slider.on("slide", function(e) {
       d3.select("#team_slider_txt").text(e);
-      render_plots(e);
+      render_plots(e,Infinity);
     });
 
-    render_plots(Infinity);
+    player_slider.on("slide", function(e) {
+      d3.select("#player_slider_txt").text(e);
+      render_plots(Infinity,e);
+    });
+
+    render_plots(Infinity,Infinity);
 
   });
