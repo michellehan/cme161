@@ -2,11 +2,11 @@
 // This code is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License. Based on a work at https://github.com/dderiso/stanford_data_viz_course.
 
 /* @pjs crisp="true"; */
-/* @pjs font="data:font/truetype,base64, {base 64 encoded data block}"; */ 
+/* @pjs font="data:font/truetype,base64, {base 64 encoded data block}"; */
 
 function random_triangle_meshes(p) {
     console.log(p)
-    
+
     // this is a hack to make the lines smoother by scaling the resolution
     scale = 2;
     height_w = 400;
@@ -29,7 +29,7 @@ function random_triangle_meshes(p) {
         lines = new Array(n_lines),
         offset_h = (height-100)/n_lines,
         offset_w = width/n_points;
-    
+
     // make 2D array of nodes
     for (var i = 0; i < n_lines; i++){
         lines[i] = new Array(n_points);
@@ -37,7 +37,7 @@ function random_triangle_meshes(p) {
             lines[i][j] = (offset_h+squeeze) * (Math.random() - .5);
         }
     }
-    
+
     var updating = false; // prevent collisions
     var draw = function() {
         if(updating){ return; } // prevent collisions
@@ -48,7 +48,7 @@ function random_triangle_meshes(p) {
         {
             p.stroke(255*(i/n_lines),139*(i/n_lines),202);
             p.beginShape(p.TRIANGLE_STRIP);
-            
+
             var offset_h_i = (scale*height - i*offset_h) - 70;
             for (var j = 0; j < n_points; j++){
                 p.vertex(j*offset_w, offset_h_i - lines[i][j]);
@@ -74,4 +74,3 @@ var random_triangle_meshes_canvas = document.getElementById("processing_random_t
 random_triangle_meshes_canvas.getContext('webgl', { antialias: true});
 var random_triangle_meshes_processing = new Processing(random_triangle_meshes_canvas, random_triangle_meshes);
 // triangle_meshes_processing.exit(); to detach it
-
