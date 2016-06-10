@@ -76,6 +76,7 @@ var hours_crimetype = [
 
 
 var year_neighborhood_param = {
+  "bindto": '#slideshow',
   "data": {
     "rows": year_neighborhood,
     "type": "line",
@@ -114,6 +115,7 @@ var year_neighborhood_param = {
 
 
 var crimetypes_neighborhood_param = {
+  "bindto": '#slideshow',
   "data": {
     "columns": crimetypes_neighborhood,
     "type": "donut",
@@ -130,6 +132,7 @@ var crimetypes_neighborhood_param = {
 };
 
 var crimetype_dayofweek_param = {
+  "bindto": '#slideshow',
   "data": {
     "columns": crimetypes_dayofweek,
     "type": "line",
@@ -150,6 +153,7 @@ var crimetype_dayofweek_param = {
 };
 
 var hours_neighborhood_param = {
+  "bindto": '#slideshow',
   "data": {
     "columns": hours_neighborhood,
     "type": "line",
@@ -170,6 +174,7 @@ var hours_neighborhood_param = {
 };
 
 var hours_crimetype_param = {
+  "bindto": '#slideshow',
   "data": {
     "columns": hours_crimetype,
     "type": "line",
